@@ -53,26 +53,6 @@ router.post('/add_category', (req, res) => {
         });
 });
 
-router.get('/category', (req, res) => {
-    const sqlQuery = "SELECT * FROM category";
-
-    pool.request()
-        .query(sqlQuery, (err, result) => {
-            if (err) return res.json({Status: false, Error: "Query Error" + err});
-            return res.json({Status: true, Result: result.recordset});
-        });
-});
-
-router.post('/add_category', (req, res) => {
-    const sqlQuery = "INSERT INTO category (name) VALUES (@category)";
-
-    pool.request()
-        .input('category', sql.VarChar, req.body.category)
-        .query(sqlQuery, (err, result) => {
-            if (err) return res.json({Status: false, Error: "Query Error" + err});
-            return res.json({Status: true});
-        });
-});
 router.get('/admin_count', (req, res) => {
     const sqlQuery = "SELECT COUNT(id) AS admin FROM admin";
 
