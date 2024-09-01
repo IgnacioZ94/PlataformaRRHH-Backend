@@ -1,5 +1,6 @@
 USE employeems
 
+/**Inicio de creacion de tablas**/
 CREATE TABLE admin (
     id INT PRIMARY KEY,
     email VARCHAR(255) NOT NULL,
@@ -22,3 +23,8 @@ CREATE TABLE employee (
     category_id INT NOT NULL,  
     FOREIGN KEY (category_id) REFERENCES category(id) 
 ); 
+/**Finalizacion de creacion de tablas**/
+
+/**Inicio del alta de usuarios administrativos**/
+
+/**Finalizacion del alta de usuarios administrativos**/

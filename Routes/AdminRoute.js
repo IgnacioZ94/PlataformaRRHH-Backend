@@ -53,6 +53,65 @@ router.post('/add_category', (req, res) => {
         });
 });
 
+//FALTA LOGICA DE GUARDADO DE IMAGEN
+
+router.post('/add_employee', upload.single('image'), (req, res) => {
+    const sqlQuery = "INSERT INTO employee (name, email, password, address, salary, image, category_id) VALUES (@name, @email, @password, @address, @salary, @image, @category_id)";
+
+    bcrypt.hash(req.body.password, 10, (err, hash) => {
+        if (err) return res.json({Status: false, Error: "Query Error" + err});
+
+        pool.request()
+            .input('name', sql.VarChar, req.body.name)
+            .input('email', sql.VarChar, req.body.email)
+            .input('password', sql.VarChar, hash)
+            .input('address', sql.VarChar, req.body.address)
+            .input('salary', sql.Decimal, req.body.salary)
+            .input('image', sql.VarChar, req.file.filename)
+            .input('category_id', sql.Int, req.body.category_id)
+            .query(sqlQuery, (err, result) => {
+                if (err) return res.json({Status: false, Error: err});
+                return res.json({Status: true});
+            });
+    });
+});
+
+router.get('/employee', (req, res) => {
+    const sqlQuery = "SELECT * FROM employee";
+
+    pool.request()
+        .query(sqlQuery, (err, result) => {
+            if (err) return res.json({Status: false, Error: "Query Error" + err});
+            return res.json({Status: true, Result: result.recordset});
+        });
+});
+
+router.get('/employee/:id', (req, res) => {
+    const id = req.params.id;
+    const sqlQuery = "SELECT * FROM employee WHERE id = @id";
+    
+    pool.request()
+        .input('id', sql.Int, id)
+        .query(sqlQuery, (err, result) => {
+            if(err) return res.json({Status: false, Error: "Query Error: " + err})
+            return res.json({Status: true, Result: result.recordset})
+        });
+})
+
+//FALTA ENDPOINT EDIT EMPLEADO
+
+router.delete('/delete_employee/:id', (req, res) => {
+    const id = req.params.id;
+    const sqlQuery = "DELETE FROM employee WHERE id = @id";
+    
+    pool.request()
+        .input('id', sql.Int, id)
+        .query(sqlQuery, (err, result) => {
+            if(err) return res.json({Status: false, Error: "Query Error: " + err})
+            return res.json({Status: true, Result: result})
+        });
+})
+
 router.get('/admin_count', (req, res) => {
     const sqlQuery = "SELECT COUNT(id) AS admin FROM admin";
 
