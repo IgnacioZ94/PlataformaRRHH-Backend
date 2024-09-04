@@ -53,7 +53,19 @@ router.post('/add_category', (req, res) => {
         });
 });
 
-//FALTA LOGICA DE GUARDADO DE IMAGEN
+// image upload 
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'Public/Images')
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname))
+    }
+})
+const upload = multer({
+    storage: storage
+})
+// end imag eupload 
 
 router.post('/add_employee', upload.single('image'), (req, res) => {
     const sqlQuery = "INSERT INTO employee (name, email, password, address, salary, image, category_id) VALUES (@name, @email, @password, @address, @salary, @image, @category_id)";
@@ -70,7 +82,10 @@ router.post('/add_employee', upload.single('image'), (req, res) => {
             .input('image', sql.VarChar, req.file.filename)
             .input('category_id', sql.Int, req.body.category_id)
             .query(sqlQuery, (err, result) => {
-                if (err) return res.json({Status: false, Error: err});
+                if (err) {
+                    console.log(err)
+                    return res.json({Status: false, Error: err});
+                }
                 return res.json({Status: true});
             });
     });
@@ -98,7 +113,32 @@ router.get('/employee/:id', (req, res) => {
         });
 })
 
-//FALTA ENDPOINT EDIT EMPLEADO
+router.put('/edit_employee/:id', (req, res) => {
+    const id = req.params.id;
+    const sqlQuery = `UPDATE employee 
+        SET name = @name, email = @email, salary = @salary, address = @address, category_id = @category_id
+        WHERE id = @id`;
+    const values = [
+        req.body.name,
+        req.body.email,
+        req.body.salary,
+        req.body.address,
+        req.body.category_id,
+        id
+    ];
+    
+    pool.request()
+        .input('name', sql.VarChar, values[0])
+        .input('email', sql.VarChar, values[1])
+        .input('salary', sql.Decimal, values[2])
+        .input('address', sql.VarChar, values[3])
+        .input('category_id', sql.Int, values[4])
+        .input('id', sql.Int, values[5])
+        .query(sqlQuery, (err, result) => {
+            if(err) return res.json({Status: false, Error: "Query Error: " + err})
+            return res.json({Status: true, Result: result})
+        });
+})
 
 router.delete('/delete_employee/:id', (req, res) => {
     const id = req.params.id;

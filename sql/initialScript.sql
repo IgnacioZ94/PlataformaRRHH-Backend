@@ -13,15 +13,14 @@ CREATE TABLE category (
 );
 
 CREATE TABLE employee (  
-    id INT PRIMARY KEY,  
+    id INT PRIMARY KEY IDENTITY(1,1), 
     name VARCHAR(255) NOT NULL,  
     email VARCHAR(255) NOT NULL,  
     password VARCHAR(255) NOT NULL,  
     address VARCHAR(255) NOT NULL,  
     salary DECIMAL(10,2) NOT NULL,  
     image VARCHAR(255) NULL,  
-    category_id INT NOT NULL,  
-    FOREIGN KEY (category_id) REFERENCES category(id) 
+    category_id INT NOT NULL
 ); 
 /**Finalizacion de creacion de tablas**/
 
