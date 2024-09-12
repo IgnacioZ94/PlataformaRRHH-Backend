@@ -43,10 +43,10 @@ router.get('/category', (req, res) => {
 });
 
 router.post('/add_category', (req, res) => {
-    const sqlQuery = "INSERT INTO category (name) VALUES (@category)";
-
+    const sqlQuery = "INSERT INTO category (name, description) VALUES (@name, @description)";
     pool.request()
-        .input('category', sql.VarChar, req.body.category)
+        .input('name', sql.VarChar, req.body.category.name)
+        .input('description', sql.VarChar, req.body.category.description)
         .query(sqlQuery, (err, result) => {
             if (err) return res.json({Status: false, Error: "Query Error" + err});
             return res.json({Status: true});
@@ -143,6 +143,18 @@ router.put('/edit_employee/:id', (req, res) => {
 router.delete('/delete_employee/:id', (req, res) => {
     const id = req.params.id;
     const sqlQuery = "DELETE FROM employee WHERE id = @id";
+    
+    pool.request()
+        .input('id', sql.Int, id)
+        .query(sqlQuery, (err, result) => {
+            if(err) return res.json({Status: false, Error: "Query Error: " + err})
+            return res.json({Status: true, Result: result})
+        });
+})
+
+router.delete('/delete_category/:id', (req, res) => {
+    const id = req.params.id;
+    const sqlQuery = "DELETE FROM category WHERE id = @id";
     
     pool.request()
         .input('id', sql.Int, id)
