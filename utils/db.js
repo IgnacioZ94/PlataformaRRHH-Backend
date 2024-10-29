@@ -3,7 +3,7 @@ import sql from 'mssql';
 const config = {
   user: 'sa',
   password: 'ifts16',
-  server: 'LAPTOP-L53VI8OC',
+  server: 'localhost',
   database: 'employeems',
   options: {
     trustServerCertificate: true

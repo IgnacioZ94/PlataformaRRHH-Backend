@@ -68,6 +68,7 @@ const upload = multer({
 // end imag eupload 
 
 router.post('/add_employee', upload.single('image'), (req, res) => {
+    console.log(req)
     const sqlQuery = "INSERT INTO employee (name, email, password, address, salary, image, category_id) VALUES (@name, @email, @password, @address, @salary, @image, @category_id)";
 
     bcrypt.hash(req.body.password, 10, (err, hash) => {
